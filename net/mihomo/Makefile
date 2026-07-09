@@ -37,6 +37,10 @@ define Package/mihomo
   TITLE:=A rule-based tunnel in Go
   URL:=https://github.com/MetaCubeX/mihomo
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle +kmod-tun +kmod-inet-diag +kmod-netlink-diag
+  PROVIDES:=mihomo
+  ALTERNATIVES:=\
+    100:/usr/bin/mihomo:/usr/libexec/mihomo-core
+  USERID:=mihomo=7890:mihomo=7890
 endef
 
 define Package/mihomo/description
@@ -58,6 +62,10 @@ endef
 define Package/mihomo/install
 	$(call GoPackage/Package/Install/Bin,$(1))
 
+	$(INSTALL_DIR) $(1)/usr/libexec/
+	mv $(1)/usr/bin/$(PKG_NAME) $(1)/usr/libexec/mihomo-core
+	rmdir $(1)/usr/bin 2>/dev/null || true
+
 	$(INSTALL_DIR) $(1)/etc/mihomo/
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/docs/config.yaml $(1)/etc/mihomo/example.yaml
 
@@ -66,6 +74,7 @@ define Package/mihomo/install
 
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) $(CURDIR)/files/mihomo.init $(1)/etc/init.d/mihomo
+
 endef
 
 $(eval $(call GoBinPackage,mihomo))
