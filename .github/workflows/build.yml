@@ -41,7 +41,7 @@ jobs:
 
       - name: Setup latest golang release
         if: env.SKIP_BUILD != 'true'
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@v7
         with:
           go-version: 'stable'
           cache: false
